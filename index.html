@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>お問い合わせフォーム</title>
+  <!-- Firebase SDKの読み込み（v9 Modular版） -->
+  <script type="module">
+    // 必要なFirebaseモジュールをインポート
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+
+    // いただいたFirebase設定情報
+    const firebaseConfig = {
+      apiKey: "AIzaSyDwqCturKZToKD3gQyTaON2fGBKoUfvs2I",
+      authDomain: "jbrentacar.firebaseapp.com",
+      projectId: "jbrentacar",
+      storageBucket: "jbrentacar.firebasestorage.app",
+      messagingSenderId: "930795073983",
+      appId: "1:930795073983:web:f3fecf9eed46806ae4b10a"
+    };
+
+    // Firebaseの初期化
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // フォーム送信時の処理
+    window.submitForm = async function(event) {
+      event.preventDefault();  // ページのリロードを防ぐ
+
+      // 各フォームの入力値を取得
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const message = document.getElementById("message").value;
+
+      try {
+        // Firestoreの「mail」コレクションにドキュメントを追加
+        await addDoc(collection(db, "mail"), {
+          to: "ishimaki@jb-rentacar.com",  // 通知先のメールアドレス
+          message: {
+            subject: "【お問い合わせ】新規フォーム送信",
+            text: `名前: ${name}\nメール: ${email}\nメッセージ: ${message}`
+          }
+        });
+        alert("送信が完了しました！");
+        document.getElementById("contactForm").reset();
+      } catch (error) {
+        console.error("エラー:", error);
+        alert("送信に失敗しました。");
+      }
+    }
+  </script>
+</head>
+<body>
+  <h1>お問い合わせフォーム</h1>
+  <form id="contactForm" onsubmit="submitForm(event)">
+    <label for="name">名前:</label><br>
+    <input type="text" id="name" name="name" required><br>
+    <label for="email">メールアドレス:</label><br>
+    <input type="email" id="email" name="email" required><br>
+    <label for="message">メッセージ:</label><br>
+    <textarea id="message" name="message" required></textarea><br>
+    <button type="submit">送信</button>
+  </form>
+</body>
+</html>
