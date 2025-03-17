@@ -1,114 +1,494 @@
-<div class="formBox" id="contact">
-  <h2 class="title01">空き状況確認・お問い合わせ</h2>
-  <!-- メールフォームプロ用エラー表示 -->
-  <div id="mfp_error"></div>
-  <div id="mfp_warning"></div>
-  <!-- メールフォームプロ用外部スクリプト -->
-  <script type="text/javascript" src="https://jb-rentacar.com/miyagi/mailformpro/mailformpro.cgi?addon=taboowords/taboowords.js&amp;callback=setTaboowords"></script>
-  <div id="mfp_phase_confirm">
-    <div id="mfp_phase_confirm_inner"></div>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JBレンタカー宮城 - お問い合わせ</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+  <style>
+    /* 全体のスタイル */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: "Hiragino Kaku Gothic ProN", "メイリオ", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f0f5f9;
+    }
+    
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    /* ヘッダー */
+    header {
+      background-color: #fff;
+      padding: 15px 0;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .header-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    .logo img {
+      height: 50px;
+    }
+    
+    .header-contact {
+      text-align: right;
+    }
+    
+    .header-tel {
+      font-size: 22px;
+      font-weight: bold;
+      color: #1e88e5;
+    }
+    
+    .header-tel:before {
+      content: "☎ ";
+    }
+    
+    .header-hours {
+      font-size: 12px;
+    }
+    
+    /* フォームボックス */
+    .formBox {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      margin: 30px 0;
+      padding: 30px;
+    }
+    
+    .title01 {
+      font-size: 24px;
+      color: #333;
+      margin-bottom: 25px;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #2196f3;
+      position: relative;
+    }
+    
+    .title01:after {
+      content: "";
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 100px;
+      height: 3px;
+      background-color: #0d47a1;
+    }
+    
+    /* フォーム要素 */
+    .mailform {
+      width: 100%;
+    }
+    
+    /* 非表示要素 */
+    .delivery-service-row {
+      display: none;
+    }
+    
+    .mailform dt, 
+    .mailform dd {
+      padding: 15px 10px;
+      display: block;
+    }
+    
+    .mailform dt {
+      font-weight: bold;
+      font-size: 16px;
+      clear: both;
+    }
+    
+    .mailform dd {
+      margin-bottom: 10px;
+    }
+    
+    .mailform input[type="text"],
+    .mailform input[type="email"],
+    .mailform select,
+    .mailform textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    
+    .mailform textarea {
+      height: 180px;
+      resize: vertical;
+    }
+    
+    .mailform select {
+      height: 42px;
+      background-color: #fff;
+    }
+    
+    .mailform input[type="radio"] {
+      margin-right: 5px;
+      margin-left: 15px;
+    }
+    
+    .mailform input[type="radio"]:first-of-type {
+      margin-left: 0;
+    }
+    
+    /* 必須マーク */
+    .must {
+      background-color: #f44336;
+      color: #fff;
+      font-size: 12px;
+      padding: 3px 8px;
+      margin-right: 8px;
+      border-radius: 3px;
+      display: inline-block;
+      line-height: 1;
+    }
+    
+    /* ボタン */
+    .mfp_buttons {
+      text-align: center;
+      margin-top: 30px;
+    }
+    
+    .submit-btn {
+      background-color: #1976d2;
+      color: #fff;
+      font-size: 18px;
+      font-weight: bold;
+      padding: 15px 50px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .submit-btn:hover {
+      background-color: #1565c0;
+    }
+    
+    /* エラーメッセージ */
+    .mfp_err {
+      color: #ff4500;
+      font-size: 12px;
+      padding: 5px 0 0;
+      display: none;
+    }
+    
+    /* 確認画面 */
+    #mfp_phase_confirm_inner {
+      background-color: #fff;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .mfp_achroma {
+      background-color: #f9f9f9;
+    }
+    
+    .mfp_colored {
+      background-color: #fff;
+    }
+    
+    /* レスポンシブ対応 */
+    @media screen and (min-width: 768px) {
+      .mailform {
+        display: flex;
+        flex-wrap: wrap;
+      }
+      
+      .mailform dt {
+        width: 30%;
+        padding: 20px 10px;
+        border-top: 1px solid #eee;
+      }
+      
+      .mailform dd {
+        width: 70%;
+        padding: 20px 10px;
+        border-top: 1px solid #eee;
+        margin-bottom: 0;
+      }
+      
+      .mailform dt:first-of-type,
+      .mailform dd:first-of-type {
+        border-top: none;
+      }
+    }
+    
+    @media screen and (max-width: 767px) {
+      .header-inner {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .header-contact {
+        margin-top: 10px;
+        text-align: center;
+      }
+      
+      .formBox {
+        padding: 20px 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <img src="/api/placeholder/200/50" alt="JBレンタカー宮城">
+      </div>
+      <div class="header-contact">
+        <div class="header-tel">0120-204-625</div>
+        <div class="header-hours">
+          平日: 9:00〜18:00 / 土日: 10:00〜16:00<br>
+          （水曜・祝日定休日）
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="formBox" id="contact">
+      <h2 class="title01">空き状況確認・お問い合わせ</h2>
+      <!-- メールフォームプロ用エラー表示 -->
+      <div id="mfp_error"></div>
+      <div id="mfp_warning"></div>
+      <!-- メールフォームプロ用外部スクリプト -->
+      <script type="text/javascript" src="https://jb-rentacar.com/miyagi/mailformpro/mailformpro.cgi?addon=taboowords/taboowords.js&amp;callback=setTaboowords"></script>
+      <div id="mfp_phase_confirm">
+        <div id="mfp_phase_confirm_inner"></div>
+      </div>
+      <!-- 問い合わせフォーム -->
+      <form id="mailformpro" action="https://jb-rentacar.com/miyagi/mailformpro/mailformpro.cgi" method="post" accept-charset="UTF-8" novalidate="">
+        <!-- 必要な隠しフィールド -->
+        <div id="mfp_hidden">
+          <input type="submit">
+          <input type="hidden" id="mfp_input_time" name="mfp_input_time" value="0">
+          <input type="hidden" id="mfp_confirm_time" name="mfp_confirm_time" value="0">
+          <input type="hidden" id="mfp_referrer" name="mfp_referrer" value="Not Provided">
+          <input type="hidden" id="mfp_errorlog" name="mfp_errorlog" value="">
+          <input type="hidden" id="mfp_timeline" name="mfp_timeline" value="">
+          <input type="hidden" id="mfp_domain" name="mfp_domain" value="jb-rentacar.com">
+          <input type="hidden" id="mfp_uri" name="mfp_uri" value="https://jb-rentacar.com/miyagi/">
+          <input type="hidden" id="mfp_jssemantics" name="mfp_jssemantics" value="1">
+          <input type="hidden" id="mfp_cart" name="mfp_cart" value="">
+          <input type="hidden" id="mfp_cartprice" name="mfp_cartprice" value="">
+          <input type="hidden" id="mfp_paypal" name="mfp_paypal" value="0">
+          <input type="hidden" id="mfp_elementsQty" name="mfp_elementsQty" value="9">
+          <input type="hidden" id="mfp_requiredElementsQty" name="mfp_requiredElementsQty" value="5">
+          <input type="hidden" id="mfp_elementsArch" name="mfp_elementsArch" value="text:4,email:1,radio:1,select-one:2,textarea:1">
+          <input type="hidden" id="mfp_script" name="mfp_script" value="https://jb-rentacar.com/miyagi/mailformpro/mailformpro.cgi">
+        </div>
+        <!-- 入力項目 -->
+        <dl class="mailform">
+          <dt class="mfp mfp_achroma"><span class="must">必須</span>お名前</dt>
+          <dd class="mfp mfp_achroma">
+            <input type="text" name="お名前" placeholder="例：山田 太郎" class="mfp_element_text mfp_element_all mfp_defaultValue" id="mfp_element_0">
+            <div class="mfp_err" id="errormsg_お名前"></div>
+          </dd>
+          <dt class="mfp mfp_colored"><span class="must">必須</span>メールアドレス</dt>
+          <dd class="mfp mfp_colored">
+            <input type="email" data-type="email" name="email" placeholder="例：info@example.com" class="mfp_element_email mfp_element_all" id="mfp_element_1">
+            <div class="mfp_err" id="errormsg_email"></div>
+          </dd>
+          <dt class="mfp mfp_achroma"><span class="must">必須</span>電話番号</dt>
+          <dd class="mfp mfp_achroma">
+            <input type="text" name="電話番号" placeholder="例：022-123-4567" class="mfp_element_text mfp_element_all mfp_defaultValue" id="mfp_element_2">
+            <div class="mfp_err" id="errormsg_電話番号"></div>
+          </dd>
+          <dt class="mfp mfp_colored"><span class="must">必須</span>種別</dt>
+          <dd class="mfp mfp_colored">
+            <input type="radio" name="種別" value="個人" class="mfp_element_radio mfp_element_all" id="mfp_element_3">
+            <input type="hidden" name="mfp_種別_checkobj" id="mfp_種別_checkobj" value="1" class="mfp_element_hidden mfp_element_all"> 個人 
+            <input type="radio" name="種別" value="法人" class="mfp_element_radio mfp_element_all" id="mfp_element_5"> 法人
+            <div class="mfp_err" id="errormsg_種別"></div>
+            <div class="mfp_err" id="errormsg_mfp_種別_checkobj"></div>
+          </dd>
+          <dt class="mfp mfp_achroma"><span class="must">必須</span>ご利用エリア(市町村まで)</dt>
+          <dd class="mfp mfp_achroma">
+            <input type="text" name="ご利用エリア(市町村まで)" placeholder="例：仙台市青葉区" class="mfp_element_text mfp_element_all mfp_defaultValue" id="mfp_element_6">
+            <div class="mfp_err" id="errormsg_ご利用エリア(市町村まで)"></div>
+          </dd>
+          <dt class="mfp mfp_colored">予定している期間</dt>
+          <dd class="mfp mfp_colored">
+            <select name="予定している期間" class="mfp_element_select-one mfp_element_all" id="mfp_element_7">
+              <option value="" selected="selected">【選択して下さい】</option>
+              <option value="7日（1週間）">7日（1週間）</option>
+              <option value="14日（2週間）">14日（2週間）</option>
+              <option value="30日（1ヶ月）">30日（1ヶ月）</option>
+              <option value="60日（2ヶ月）">60日（2ヶ月）</option>
+              <option value="90日（3ヶ月）">90日（3ヶ月）</option>
+              <option value="90日以上">90日以上</option>
+            </select>
+            <div class="mfp_err" id="errormsg_予定している期間"></div>
+          </dd>
+          <dt class="mfp mfp_achroma">予定出発日</dt>
+          <dd class="mfp mfp_achroma">
+            <input type="text" id="datepicker" name="予定出発日（レンタル開始希望日）" placeholder="例：2025/04/01" class="mfp_element_text mfp_element_all mfp_defaultValue hasDatepicker">
+            <div class="mfp_err" id="errormsg_予定出発日（レンタル開始希望日）"></div>
+          </dd>
+          <dt class="mfp mfp_colored delivery-service-row">配車サービスの有無</dt>
+          <dd class="mfp mfp_colored delivery-service-row">
+            <select name="配車サービスの有無" class="mfp_element_select-one mfp_element_all" id="mfp_element_9">
+              <option value="" selected="selected">【選択して下さい】</option>
+              <option value="必要">必要</option>
+              <option value="不要">不要</option>
+            </select>
+            <div class="mfp_err" id="errormsg_配車サービスの有無"></div>
+          </dd>
+          <dt class="mfp mfp_achroma">予定車種ランク</dt>
+          <dd class="mfp mfp_achroma">
+            <select name="予定車種ランク" class="mfp_element_select-one mfp_element_all" id="mfp_element_10">
+              <option value="" selected="selected">【選択して下さい】</option>
+              <option value="J-1（2ドア／軽自動車）">J-1（2ドア／軽自動車）</option>
+              <option value="J-2（4ドア／軽自動車）">J-2（4ドア／軽自動車）</option>
+              <option value="J-3（軽貨物バンタイプ）">J-3（軽貨物バンタイプ）</option>
+              <option value="J-4（小型乗用車）">J-4（小型乗用車）</option>
+              <option value="J-5（商用貨物バンタイプ）">J-5（商用貨物バンタイプ）</option>
+            </select>
+            <div class="mfp_err" id="errormsg_予定車種ランク"></div>
+          </dd>
+          <dt class="mfp mfp_colored">その他</dt>
+          <dd class="mfp mfp_colored">
+            <textarea name="その他" placeholder="その他ご質問やご要望があればご記入ください" class="mfp_element_textarea mfp_element_all" id="mfp_element_11"></textarea>
+            <div class="mfp_err" id="errormsg_その他"></div>
+          </dd>
+        </dl>
+        <div class="mfp_buttons">
+          <button type="submit" class="submit-btn mfp_element_submit mfp_element_all">
+            確認画面へ進む
+          </button>
+        </div>
+      </form>
+      <!-- メールフォームプロ用スクリプト -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+      <script>
+        $(function() {
+          // 日付選択のための設定
+          $("#datepicker").datepicker({
+            dateFormat: 'yy/mm/dd',
+            minDate: 0,
+            showOtherMonths: true,
+            selectOtherMonths: true,
+            numberOfMonths: 1,
+            showButtonPanel: true,
+            closeText: '閉じる',
+            currentText: '今日',
+            monthNames: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
+            monthNamesShort: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
+            dayNames: ['日曜日','月曜日','火曜日','水曜日','木曜日','金曜日','土曜日'],
+            dayNamesShort: ['日','月','火','水','木','金','土'],
+            dayNamesMin: ['日','月','火','水','木','金','土'],
+            weekHeader: '週',
+            isRTL: false,
+            showMonthAfterYear: true,
+            yearSuffix: '年',
+            beforeShowDay: function(date) {
+              // 水曜日（3）と祝日を無効にする場合の処理
+              // 注: 祝日判定は別途ロジックが必要です
+              return [date.getDay() !== 3, ''];
+            }
+          });
+          
+          // 予定している期間の選択に応じて配車サービスの表示/非表示を切り替え
+          $('select[name="予定している期間"]').change(function() {
+            const selectedValue = $(this).val();
+            const showDeliveryService = 
+              selectedValue === "30日（1ヶ月）" || 
+              selectedValue === "60日（2ヶ月）" || 
+              selectedValue === "90日（3ヶ月）" || 
+              selectedValue === "90日以上";
+            
+            if (showDeliveryService) {
+              $('.delivery-service-row').slideDown(300);
+            } else {
+              $('.delivery-service-row').slideUp(300);
+              // 選択をリセット
+              $('select[name="配車サービスの有無"]').val('');
+            }
+          });
+
+          // 簡易バリデーション
+          $("#mailformpro").submit(function(e) {
+            let hasError = false;
+            
+            // 必須項目のチェック
+            const requiredFields = ['お名前', 'email', '電話番号', 'ご利用エリア(市町村まで)'];
+            
+            requiredFields.forEach(function(field) {
+              const input = $(`input[name="${field}"]`);
+              if (input.val() === '') {
+                $(`#errormsg_${field}`).text('この項目は必須です').show();
+                hasError = true;
+              } else {
+                $(`#errormsg_${field}`).hide();
+              }
+            });
+            
+            // 種別のチェック
+            if (!$('input[name="種別"]:checked').val()) {
+              $('#errormsg_種別').text('種別を選択してください').show();
+              hasError = true;
+            } else {
+              $('#errormsg_種別').hide();
+            }
+            
+            // メールアドレスの形式チェック
+            const email = $('input[name="email"]').val();
+            if (email && !validateEmail(email)) {
+              $('#errormsg_email').text('正しいメールアドレスを入力してください').show();
+              hasError = true;
+            }
+            
+            // 電話番号の形式チェック
+            const tel = $('input[name="電話番号"]').val();
+            if (tel && !validatePhone(tel)) {
+              $('#errormsg_電話番号').text('正しい電話番号を入力してください').show();
+              hasError = true;
+            }
+            
+            if (hasError) {
+              e.preventDefault();
+              // エラーがある場合はスクロール
+              $('html, body').animate({
+                scrollTop: $('.mfp_err:visible:first').offset().top - 100
+              }, 500);
+            }
+          });
+          
+          // バリデーション関数
+          function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+          }
+          
+          function validatePhone(phone) {
+            // ハイフンありなし両方可
+            const re = /^(?:\d{10}|\d{2,4}-\d{2,4}-\d{4}|\d{3}-\d{4})$/;
+            return re.test(phone.replace(/\s+/g, ''));
+          }
+        });
+      </script>
+      <script type="text/javascript" id="mfpjs" src="mailformpro/mailformpro.cgi" charset="UTF-8"></script>
+    </div>
   </div>
-  <!-- 問い合わせフォーム -->
-  <form id="mailformpro" action="https://jb-rentacar.com/miyagi/mailformpro/mailformpro.cgi" method="post" accept-charset="UTF-8" novalidate="">
-    <!-- 必要な隠しフィールド -->
-    <div id="mfp_hidden">
-      <input type="submit">
-      <input type="hidden" id="mfp_input_time" name="mfp_input_time" value="0">
-      <input type="hidden" id="mfp_confirm_time" name="mfp_confirm_time" value="0">
-      <input type="hidden" id="mfp_referrer" name="mfp_referrer" value="Not Provided">
-      <input type="hidden" id="mfp_errorlog" name="mfp_errorlog" value="">
-      <input type="hidden" id="mfp_timeline" name="mfp_timeline" value="">
-      <input type="hidden" id="mfp_domain" name="mfp_domain" value="jb-rentacar.com">
-      <input type="hidden" id="mfp_uri" name="mfp_uri" value="https://jb-rentacar.com/miyagi/">
-      <input type="hidden" id="mfp_jssemantics" name="mfp_jssemantics" value="1">
-      <input type="hidden" id="mfp_cart" name="mfp_cart" value="">
-      <input type="hidden" id="mfp_cartprice" name="mfp_cartprice" value="">
-      <input type="hidden" id="mfp_paypal" name="mfp_paypal" value="0">
-      <input type="hidden" id="mfp_elementsQty" name="mfp_elementsQty" value="9">
-      <input type="hidden" id="mfp_requiredElementsQty" name="mfp_requiredElementsQty" value="5">
-      <input type="hidden" id="mfp_elementsArch" name="mfp_elementsArch" value="text:4,email:1,radio:1,select-one:2,textarea:1">
-      <input type="hidden" id="mfp_script" name="mfp_script" value="https://jb-rentacar.com/miyagi/mailformpro/mailformpro.cgi">
-    </div>
-    <!-- 入力項目 -->
-    <dl class="mailform">
-      <dt class="mfp mfp_achroma"><span class="must">必須</span>お名前</dt>
-      <dd class="mfp mfp_achroma">
-        <input type="text" name="お名前" size="60" class="mfp_element_text mfp_element_all mfp_defaultValue" id="mfp_element_0" style="width: 360px;">
-        <div class="mfp_err" id="errormsg_お名前"></div>
-      </dd>
-      <dt class="mfp mfp_colored"><span class="must">必須</span>メールアドレス</dt>
-      <dd class="mfp mfp_colored">
-        <input type="email" data-type="email" name="email" size="60" class="mfp_element_email mfp_element_all" id="mfp_element_1" style="width: 360px;">
-        <div class="mfp_err" id="errormsg_email"></div>
-      </dd>
-      <dt class="mfp mfp_achroma"><span class="must">必須</span>電話番号</dt>
-      <dd class="mfp mfp_achroma">
-        <input type="text" name="電話番号" size="60" class="mfp_element_text mfp_element_all mfp_defaultValue" id="mfp_element_2" style="width: 360px;">
-        <div class="mfp_err" id="errormsg_電話番号"></div>
-      </dd>
-      <dt class="mfp mfp_colored"><span class="must">必須</span>種別</dt>
-      <dd class="mfp mfp_colored">
-        <input type="radio" name="種別" value="個人" class="mfp_element_radio mfp_element_all" id="mfp_element_3">
-        <input type="hidden" name="mfp_種別_checkobj" id="mfp_種別_checkobj" value="1" class="mfp_element_hidden mfp_element_all"> 個人 
-        <input type="radio" name="種別" value="法人" class="mfp_element_radio mfp_element_all" id="mfp_element_5"> 法人
-        <div class="mfp_err" id="errormsg_種別"></div>
-        <div class="mfp_err" id="errormsg_mfp_種別_checkobj"></div>
-      </dd>
-      <dt class="mfp mfp_achroma"><span class="must">必須</span>ご利用エリア(市町村まで)</dt>
-      <dd class="mfp mfp_achroma">
-        <input type="text" name="ご利用エリア(市町村まで)" size="60" class="mfp_element_text mfp_element_all mfp_defaultValue" id="mfp_element_6" style="width: 360px;">
-        <div class="mfp_err" id="errormsg_ご利用エリア(市町村まで)"></div>
-      </dd>
-      <dt class="mfp mfp_colored">予定している期間</dt>
-      <dd class="mfp mfp_colored">
-        <select name="エリア" class="mfp_element_select-one mfp_element_all" id="mfp_element_7">
-          <option value="" selected="selected">【選択して下さい】</option>
-          <option value="7日（1週間）">7日（1週間）</option>
-          <option value="14日（2週間）">14日（2週間）</option>
-          <option value="30日（1ヶ月）">30日（1ヶ月）</option>
-          <option value="60日（2ヶ月）">60日（2ヶ月）</option>
-          <option value="90日（3ヶ月）">90日（3ヶ月）</option>
-          <option value="90日以上">90日以上</option>
-        </select>
-        <div class="mfp_err" id="errormsg_エリア"></div>
-      </dd>
-      <dt class="mfp mfp_achroma">予定出発日</dt>
-      <dd class="mfp mfp_achroma">
-        <input type="text" id="datepicker" name="予定出発日（レンタル開始希望日）" class="mfp_element_text mfp_element_all mfp_defaultValue hasDatepicker">
-        <div class="mfp_err" id="errormsg_予定出発日（レンタル開始希望日）"></div>
-      </dd>
-      <dt class="mfp mfp_colored">配車サービスの有無</dt>
-      <dd class="mfp mfp_colored">
-        <select name="予定車種ランク" class="mfp_element_select-one mfp_element_all" id="mfp_element_9">
-          <option value="" selected="selected">【選択して下さい】</option>
-          <option value="必要">必要</option>
-          <option value="不要">不要</option>
-        </select>
-        <div class="mfp_err" id="errormsg_予定車種ランク"></div>
-      </dd>
-      <dt class="mfp mfp_achroma">予定車種ランク</dt>
-      <dd class="mfp mfp_achroma">
-        <select name="予定車種ランク" class="mfp_element_select-one mfp_element_all" id="mfp_element_10">
-          <option value="" selected="selected">【選択して下さい】</option>
-          <option value="J-1（2ドア／軽自動車）">J-1（2ドア／軽自動車）</option>
-          <option value="J-2（4ドア／軽自動車）">J-2（4ドア／軽自動車）</option>
-          <option value="J-3（軽貨物バンタイプ）">J-3（軽貨物バンタイプ）</option>
-          <option value="J-4（小型乗用車）">J-4（小型乗用車）</option>
-          <option value="J-5（商用貨物バンタイプ）">J-5（商用貨物バンタイプ）</option>
-        </select>
-      </dd>
-      <dt class="mfp mfp_colored">その他</dt>
-      <dd class="mfp mfp_colored">
-        <textarea name="その他" rows="30" cols="60" class="mfp_element_textarea mfp_element_all" id="mfp_element_11" style="width: 360px; height: 180px;"></textarea>
-        <div class="mfp_err" id="errormsg_その他"></div>
-      </dd>
-    </dl>
-    <div class="mfp_buttons">
-      <button type="submit" style="background: none; border: none;" class="mfp_element_submit mfp_element_all">
-        <img src="./assets/images/common/confirm_btn.png" alt="確認画面へ進む">
-      </button>
-    </div>
-  </form>
-  <!-- メールフォームプロ用スクリプト -->
-  <script type="text/javascript" id="mfpjs" src="mailformpro/mailformpro.cgi" charset="UTF-8"></script>
-</div>
+</body>
+</html>
