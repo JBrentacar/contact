@@ -52,6 +52,8 @@
     #mfp_phase_confirm_inner { background-color: #fff; padding: 20px; margin-bottom: 20px; }
     .mfp_achroma { background-color: #f9f9f9; }
     .mfp_colored { background-color: #fff; }
+    /* 配送サービスの行は初期状態で非表示 */
+    .delivery-service-row { display: none; }
     /* レスポンシブ */
     @media screen and (min-width: 768px) {
       .mailform { display: flex; flex-wrap: wrap; }
@@ -98,7 +100,7 @@
       </div>
       <!-- 問い合わせフォーム本体 -->
       <form id="mailformpro" action="https://jb-rentacar.com/miyagi/mailformpro/mailformpro.cgi" method="post" accept-charset="UTF-8" novalidate="">
-        <!-- 隠しフィールド（送信ボタンは含めず） -->
+        <!-- 隠しフィールド -->
         <div id="mfp_hidden">
           <input type="hidden" id="mfp_input_time" name="mfp_input_time" value="0">
           <input type="hidden" id="mfp_confirm_time" name="mfp_confirm_time" value="0">
@@ -159,6 +161,16 @@
             </select>
             <div class="mfp_err" id="errormsg_予定している期間"></div>
           </dd>
+          <!-- 配送サービスの行（初期は非表示） -->
+          <dt class="mfp mfp_achroma delivery-service-row"><span class="must">必須</span>配送サービスの有無</dt>
+          <dd class="mfp mfp_achroma delivery-service-row">
+            <select name="配送サービスの有無" class="mfp_element_select-one mfp_element_all" id="delivery_service">
+              <option value="" selected="selected">【選択して下さい】</option>
+              <option value="必要">必要</option>
+              <option value="不要">不要</option>
+            </select>
+            <div class="mfp_err" id="errormsg_配送サービスの有無"></div>
+          </dd>
           <dt class="mfp mfp_achroma">予定出発日</dt>
           <dd class="mfp mfp_achroma">
             <input type="text" id="datepicker" name="予定出発日（レンタル開始希望日）" placeholder="例：2025/04/01" class="mfp_element_text mfp_element_all mfp_defaultValue hasDatepicker">
@@ -215,6 +227,21 @@
             }
           });
           
+          // 予定している期間が30日以上の場合、配送サービスの行を表示
+          $('#mfp_element_7').change(function() {
+            const selected = $(this).val();
+            const showDelivery = (selected === "30日（1ヶ月）" ||
+                                  selected === "60日（2ヶ月）" ||
+                                  selected === "90日（3ヶ月）" ||
+                                  selected === "90日以上");
+            if (showDelivery) {
+              $('.delivery-service-row').slideDown(300);
+            } else {
+              $('.delivery-service-row').slideUp(300);
+              $('#delivery_service').val('');
+            }
+          });
+          
           // 簡易バリデーション
           $("#mailformpro").submit(function(e) {
             let hasError = false;
@@ -228,26 +255,22 @@
                 $(`#errormsg_${field}`).hide();
               }
             });
-            
             if (!$('input[name="種別"]:checked').val()) {
               $('#errormsg_種別').text('種別を選択してください').show();
               hasError = true;
             } else {
               $('#errormsg_種別').hide();
             }
-            
             const email = $('input[name="email"]').val();
             if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
               $('#errormsg_email').text('正しいメールアドレスを入力してください').show();
               hasError = true;
             }
-            
             const tel = $('input[name="電話番号"]').val();
             if (tel && !/^(?:\d{10}|\d{2,4}-\d{2,4}-\d{4}|\d{3}-\d{4})$/.test(tel.replace(/\s+/g, ''))) {
               $('#errormsg_電話番号').text('正しい電話番号を入力してください').show();
               hasError = true;
             }
-            
             if (hasError) {
               e.preventDefault();
               $('html, body').animate({
@@ -261,6 +284,7 @@
       <script type="text/javascript" id="mfpjs" src="mailformpro/mailformpro.cgi" charset="UTF-8"></script>
     </div>
   </div>
+
   <!-- フッター -->
   <footer>
     <div class="footerBox">
