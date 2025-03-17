@@ -2,213 +2,72 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>JBレンタカー宮城 - お問い合わせ</title>
-  <!-- jQuery UI用のCSS -->
+  <!-- jQuery UI用CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+  <!-- メールフォームプロ用CSS（必要に応じてパスを調整してください） -->
+  <link rel="stylesheet" href="mfp.statics/mailformpro.css" type="text/css">
   <style>
-    /* 全体のスタイル */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      font-family: "Hiragino Kaku Gothic ProN", "メイリオ", sans-serif;
-      line-height: 1.6;
-      color: #333;
-      background-color: #f0f5f9;
-    }
-    .container {
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 20px;
-    }
+    /* 全体スタイル */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: "Hiragino Kaku Gothic ProN", "メイリオ", sans-serif; line-height: 1.6; color: #333; background-color: #f0f5f9; }
+    .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
     /* ヘッダー */
-    header {
-      background-color: #fff;
-      padding: 15px 0;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    .header-inner {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 0 20px;
-    }
-    .logo img {
-      height: 50px;
-    }
-    .header-contact {
-      text-align: right;
-    }
-    .header-tel {
-      font-size: 22px;
-      font-weight: bold;
-      color: #1e88e5;
-    }
-    .header-tel:before {
-      content: "☎ ";
-    }
-    .header-hours {
-      font-size: 12px;
-    }
+    header { background-color: #fff; padding: 15px 0; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .header-inner { display: flex; justify-content: space-between; align-items: center; max-width: 1000px; margin: 0 auto; padding: 0 20px; }
+    .logo img { height: 50px; }
+    .header-contact { text-align: right; }
+    .header-tel { font-size: 22px; font-weight: bold; color: #1e88e5; }
+    .header-tel:before { content: "☎ "; }
+    .header-hours { font-size: 12px; }
     /* フォームボックス */
-    .formBox {
-      background-color: #fff;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      margin: 30px 0;
-      padding: 30px;
-    }
-    .title01 {
-      font-size: 24px;
-      color: #333;
-      margin-bottom: 25px;
-      padding-bottom: 10px;
-      border-bottom: 3px solid #2196f3;
-      position: relative;
-    }
-    .title01:after {
-      content: "";
-      position: absolute;
-      bottom: -3px;
-      left: 0;
-      width: 100px;
-      height: 3px;
-      background-color: #0d47a1;
-    }
+    .formBox { background-color: #fff; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin: 30px 0; padding: 30px; }
+    .title01 { font-size: 24px; color: #333; margin-bottom: 25px; padding-bottom: 10px; border-bottom: 3px solid #2196f3; position: relative; }
+    .title01:after { content: ""; position: absolute; bottom: -3px; left: 0; width: 100px; height: 3px; background-color: #0d47a1; }
     /* フォーム要素 */
-    .mailform {
-      width: 100%;
-    }
-    .mailform dt, 
-    .mailform dd {
-      padding: 15px 10px;
-      display: block;
-    }
-    .mailform dt {
-      font-weight: bold;
-      font-size: 16px;
-      clear: both;
-    }
-    .mailform dd {
-      margin-bottom: 10px;
-    }
+    .mailform { width: 100%; }
+    .mailform dt, .mailform dd { padding: 15px 10px; display: block; }
+    .mailform dt { font-weight: bold; font-size: 16px; clear: both; }
+    .mailform dd { margin-bottom: 10px; }
     .mailform input[type="text"],
     .mailform input[type="email"],
     .mailform select,
     .mailform textarea {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 16px;
+      width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px;
     }
-    .mailform textarea {
-      height: 180px;
-      resize: vertical;
-    }
-    .mailform select {
-      height: 42px;
-      background-color: #fff;
-    }
-    .mailform input[type="radio"] {
-      margin-right: 5px;
-      margin-left: 15px;
-    }
-    .mailform input[type="radio"]:first-of-type {
-      margin-left: 0;
-    }
+    .mailform textarea { height: 180px; resize: vertical; }
+    .mailform select { height: 42px; background-color: #fff; }
+    .mailform input[type="radio"] { margin-right: 5px; margin-left: 15px; }
+    .mailform input[type="radio"]:first-of-type { margin-left: 0; }
     /* 必須マーク */
-    .must {
-      background-color: #f44336;
-      color: #fff;
-      font-size: 12px;
-      padding: 3px 8px;
-      margin-right: 8px;
-      border-radius: 3px;
-      display: inline-block;
-      line-height: 1;
-    }
+    .must { background-color: #f44336; color: #fff; font-size: 12px; padding: 3px 8px; margin-right: 8px; border-radius: 3px; display: inline-block; line-height: 1; }
     /* ボタン */
-    .mfp_buttons {
-      text-align: center;
-      margin-top: 30px;
-    }
-    .submit-btn {
-      background-color: #1976d2;
-      color: #fff;
-      font-size: 18px;
-      font-weight: bold;
-      padding: 15px 50px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-    .submit-btn:hover {
-      background-color: #1565c0;
-    }
+    .mfp_buttons { text-align: center; margin-top: 30px; }
+    .submit-btn { background-color: #1976d2; color: #fff; font-size: 18px; font-weight: bold; padding: 15px 50px; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s; }
+    .submit-btn:hover { background-color: #1565c0; }
     /* エラーメッセージ */
-    .mfp_err {
-      color: #ff4500;
-      font-size: 12px;
-      padding: 5px 0 0;
-      display: none;
-    }
+    .mfp_err { color: #ff4500; font-size: 12px; padding: 5px 0 0; display: none; }
     /* 確認画面 */
-    #mfp_phase_confirm_inner {
-      background-color: #fff;
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-    .mfp_achroma {
-      background-color: #f9f9f9;
-    }
-    .mfp_colored {
-      background-color: #fff;
-    }
-    /* レスポンシブ対応 */
+    #mfp_phase_confirm_inner { background-color: #fff; padding: 20px; margin-bottom: 20px; }
+    .mfp_achroma { background-color: #f9f9f9; }
+    .mfp_colored { background-color: #fff; }
+    /* レスポンシブ */
     @media screen and (min-width: 768px) {
-      .mailform {
-        display: flex;
-        flex-wrap: wrap;
-      }
-      .mailform dt {
-        width: 30%;
-        padding: 20px 10px;
-        border-top: 1px solid #eee;
-      }
-      .mailform dd {
-        width: 70%;
-        padding: 20px 10px;
-        border-top: 1px solid #eee;
-        margin-bottom: 0;
-      }
-      .mailform dt:first-of-type,
-      .mailform dd:first-of-type {
-        border-top: none;
-      }
+      .mailform { display: flex; flex-wrap: wrap; }
+      .mailform dt { width: 30%; padding: 20px 10px; border-top: 1px solid #eee; }
+      .mailform dd { width: 70%; padding: 20px 10px; border-top: 1px solid #eee; margin-bottom: 0; }
+      .mailform dt:first-of-type, .mailform dd:first-of-type { border-top: none; }
     }
     @media screen and (max-width: 767px) {
-      .header-inner {
-        flex-direction: column;
-        text-align: center;
-      }
-      .header-contact {
-        margin-top: 10px;
-        text-align: center;
-      }
-      .formBox {
-        padding: 20px 15px;
-      }
+      .header-inner { flex-direction: column; text-align: center; }
+      .header-contact { margin-top: 10px; }
+      .formBox { padding: 20px 15px; }
     }
   </style>
 </head>
-<body>
+<body id="top">
+  <!-- ヘッダー -->
   <header>
     <div class="header-inner">
       <div class="logo">
@@ -224,10 +83,12 @@
     </div>
   </header>
 
+  <!-- コンテンツ -->
   <div class="container">
+    <!-- 問い合わせフォーム -->
     <div class="formBox" id="contact">
       <h2 class="title01">空き状況確認・お問い合わせ</h2>
-      <!-- メールフォームプロ用エラー表示 -->
+      <!-- エラー表示用 -->
       <div id="mfp_error"></div>
       <div id="mfp_warning"></div>
       <!-- メールフォームプロ用外部スクリプト（1回のみ読み込み） -->
@@ -235,9 +96,9 @@
       <div id="mfp_phase_confirm">
         <div id="mfp_phase_confirm_inner"></div>
       </div>
-      <!-- 問い合わせフォーム -->
+      <!-- 問い合わせフォーム本体 -->
       <form id="mailformpro" action="https://jb-rentacar.com/miyagi/mailformpro/mailformpro.cgi" method="post" accept-charset="UTF-8" novalidate="">
-        <!-- 必要な隠しフィールド（送信ボタンは除外） -->
+        <!-- 隠しフィールド（送信ボタンは含めず） -->
         <div id="mfp_hidden">
           <input type="hidden" id="mfp_input_time" name="mfp_input_time" value="0">
           <input type="hidden" id="mfp_confirm_time" name="mfp_confirm_time" value="0">
@@ -322,17 +183,15 @@
           </dd>
         </dl>
         <div class="mfp_buttons">
-          <button type="submit" class="submit-btn mfp_element_submit mfp_element_all">
-            確認画面へ進む
-          </button>
+          <button type="submit" class="submit-btn mfp_element_submit mfp_element_all">確認画面へ進む</button>
         </div>
       </form>
-      <!-- jQueryとjQuery UIの読み込み -->
+      <!-- jQuery と jQuery UI の読み込み -->
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
       <script>
         $(function() {
-          // 日付選択のための設定
+          // 日付選択の設定
           $("#datepicker").datepicker({
             dateFormat: 'yy/mm/dd',
             minDate: 0,
@@ -351,6 +210,7 @@
             showMonthAfterYear: true,
             yearSuffix: '年',
             beforeShowDay: function(date) {
+              // 例：水曜日を無効にする
               return [date.getDay() !== 3, ''];
             }
           });
@@ -359,7 +219,6 @@
           $("#mailformpro").submit(function(e) {
             let hasError = false;
             const requiredFields = ['お名前', 'email', '電話番号', 'ご利用エリア(市町村まで)'];
-            
             requiredFields.forEach(function(field) {
               const input = $(`input[name="${field}"]`);
               if (input.val() === '') {
@@ -398,9 +257,24 @@
           });
         });
       </script>
-      <!-- メールフォームプロ用スクリプト（重複しないように1回だけ読み込み） -->
+      <!-- メールフォームプロ用スクリプト（1回のみ読み込み） -->
       <script type="text/javascript" id="mfpjs" src="mailformpro/mailformpro.cgi" charset="UTF-8"></script>
     </div>
   </div>
+  <!-- フッター -->
+  <footer>
+    <div class="footerBox">
+      <div class="footer-box01">
+        Copyright © 2019
+        宮城の格安レンタカー「JBレンタカー」
+        All Rights reserved.
+      </div>
+      <div class="footer-box02">
+        〒986-0814　宮城県石巻市南中里2-9-27　
+        本社HP　
+        <a href="https://nishizawa-jb.com/" target="_blank">https://nishizawa-jb.com/</a>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>
